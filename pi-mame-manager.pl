@@ -2,12 +2,6 @@
 use strict;
 use warnings;
 
-my $is_up = IsEthernetUp();
-my $is_mame_running = IsMameRunning();
-return 0;
-
-### End Main Body ###
-
 #
 # Determine if the physical ethernet adapter is up (or not)
 #
@@ -29,5 +23,10 @@ sub IsMameRunning()
 {
   return `pidof mame`;
 }
+
+### Start Main Program ###
+
+my $is_up = IsEthernetUp();
+my $is_mame_running = IsMameRunning();
 
 #EOF
