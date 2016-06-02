@@ -30,7 +30,7 @@ sub IsMameRunning()
 sub ShutdownMame()
 {
   my $mame_pid = `pidof mame`;
-  kill( SIGTERM, $mame_pid );
+  kill( "SIGTERM", $mame_pid );
 }
 
 ### Start Main Program ###
