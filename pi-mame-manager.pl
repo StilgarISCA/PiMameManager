@@ -11,7 +11,7 @@ sub IsEthernetUp()
 {
   my $ethernet_response = `cat /sys/class/net/eth2/operstate`;
   chomp( $ethernet_response );
-  return ($ethernet_response eq 'up');
+  return ( $ethernet_response eq 'up' );
 }
 
 #
