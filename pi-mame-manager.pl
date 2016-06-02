@@ -35,7 +35,19 @@ sub ShutdownMame()
 
 ### Start Main Program ###
 
-my $is_up = IsEthernetUp();
+my $is_power_up = IsEthernetUp();
 my $is_mame_running = IsMameRunning();
+
+if ( $is_power_up ) {
+  if ( !$is_mame_running ) {
+    # start mame
+  }
+} else { # power loss
+  if ( $is_mame_running ) {
+    ShutdownMame();
+  }
+  # if battery low
+    # Powerdown Pi
+}
 
 #EOF
