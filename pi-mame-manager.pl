@@ -24,6 +24,15 @@ sub IsMameRunning()
   return `pidof mame`;
 }
 
+#
+# Stops the Mame process from running
+#
+sub ShutdownMame()
+{
+  my $mame_pid = `pidof mame`;
+  kill( SIGTERM, $mame_pid );
+}
+
 ### Start Main Program ###
 
 my $is_up = IsEthernetUp();
