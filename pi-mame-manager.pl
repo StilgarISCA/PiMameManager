@@ -55,6 +55,9 @@ my $is_power_up = IsEthernetUp();
 my $is_mame_running = IsMameRunning();
 
 if ( $is_power_up ) {
+  # UpdateLastRun
+  # UpdateChargeLevel
+  # DateDiff lastDownTime, curTime minus expected charge time
   if ( !$is_mame_running ) {
     StartMame();
   }
@@ -62,7 +65,9 @@ if ( $is_power_up ) {
   if ( $is_mame_running ) {
     ShutdownMame();
   }
+  # UpdatePowerLoss
   # if battery low
+  # TimeDiff down, up minus expected battery life
     # ShutdownPi();
 }
 
