@@ -33,6 +33,14 @@ sub ShutdownMame()
   kill( "SIGTERM", $mame_pid );
 }
 
+#
+# Launch the Mame process
+#
+sub StartMame()
+{
+  exec( '/home/pi/mame/mame trackfld' );
+}
+
 ### Start Main Program ###
 
 my $is_power_up = IsEthernetUp();
@@ -40,7 +48,7 @@ my $is_mame_running = IsMameRunning();
 
 if ( $is_power_up ) {
   if ( !$is_mame_running ) {
-    # start mame
+    StartMame();
   }
 } else { # power loss
   if ( $is_mame_running ) {
