@@ -34,6 +34,14 @@ sub ShutdownMame()
 }
 
 #
+# Power down the system
+#
+sub ShutdownPi()
+{
+  exec( 'sudo shutdown -h now' );
+}
+
+#
 # Launch the Mame process
 #
 sub StartMame()
@@ -55,7 +63,7 @@ if ( $is_power_up ) {
     ShutdownMame();
   }
   # if battery low
-    # Powerdown Pi
+    # ShutdownPi();
 }
 
 #EOF
