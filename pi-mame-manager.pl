@@ -49,13 +49,29 @@ sub StartMame()
   exec( '/home/pi/mame/mame trackfld' );
 }
 
+#
+# Update file timestamp used to track last known powered run
+#
+UpdateLastPoweredRunTime()
+{
+  exec( 'touch /home/pi/.lastpoweredrun' );
+}
+
+#
+# Update file timestamp used to track last known unpowered run
+#
+UpdateLastUnpoweredRunTime()
+{
+  exec( 'touch /home/pi/.lastunpoweredrun' );
+}
+
 ### Start Main Program ###
 
 my $is_power_up = IsEthernetUp();
 my $is_mame_running = IsMameRunning();
 
 if ( $is_power_up ) {
-  # UpdateLastRun
+  UpdateLastPoweredRunTime();
   # UpdateChargeLevel
   # DateDiff lastDownTime, curTime minus expected charge time
   if ( !$is_mame_running ) {
@@ -65,7 +81,7 @@ if ( $is_power_up ) {
   if ( $is_mame_running ) {
     ShutdownMame();
   }
-  # UpdatePowerLoss
+  UpdateLastUnpoweredRunTime();
   # if battery low
   # TimeDiff down, up minus expected battery life
     # ShutdownPi();
