@@ -52,7 +52,7 @@ sub StartMame()
 #
 # Update file timestamp used to track last known powered run
 #
-UpdateLastPoweredRunTime()
+sub UpdateLastPoweredRunTime()
 {
   exec( 'touch /home/pi/.lastpoweredrun' );
 }
@@ -60,7 +60,7 @@ UpdateLastPoweredRunTime()
 #
 # Update file timestamp used to track last known unpowered run
 #
-UpdateLastUnpoweredRunTime()
+sub UpdateLastUnpoweredRunTime()
 {
   exec( 'touch /home/pi/.lastunpoweredrun' );
 }
