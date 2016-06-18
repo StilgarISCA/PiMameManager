@@ -2,6 +2,11 @@
 use strict;
 use warnings;
 
+my $USER = "parallels"; # user account this will run as
+my $ETHERNET_DEVICE = "eth1"; # ethernet port connected to switch
+my $PATH_TO_MAME = "/home/$USER/mame/"; # path to the folder containing mame exe
+my $GAME = "trackfld"; # name of the game to run
+
 #
 # Determine if the physical ethernet adapter is up (or not)
 #
@@ -9,7 +14,7 @@ use warnings;
 #
 sub IsEthernetUp()
 {
-  my $ethernet_response = `cat /sys/class/net/eth2/operstate`;
+  my $ethernet_response = `cat /sys/class/net/$ETHERNET_DEVICE/operstate`;
   chomp( $ethernet_response );
   return ( $ethernet_response eq 'up' );
 }
@@ -58,7 +63,7 @@ sub ShutdownPi()
 #
 sub StartMame()
 {
-  system( '/home/pi/mame/mame trackfld' );
+  system( '$PATH_TO_MAME/mame $GAME' );
 }
 
 #
@@ -66,7 +71,7 @@ sub StartMame()
 #
 sub UpdateLastPoweredRunTime()
 {
-  system( 'touch /home/pi/.lastpoweredrun' );
+  system( 'touch /home/$USER/.lastpoweredrun' );
 }
 
 #
@@ -74,7 +79,7 @@ sub UpdateLastPoweredRunTime()
 #
 sub UpdateLastUnpoweredRunTime()
 {
-  system( 'touch /home/pi/.lastunpoweredrun' );
+  system( 'touch /home/$USER/.lastunpoweredrun' );
 }
 
 ### Start Main Program ###
