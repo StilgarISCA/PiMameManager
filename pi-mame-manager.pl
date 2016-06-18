@@ -3,6 +3,16 @@ use strict;
 use warnings;
 
 #
+# Get the number of seconds since a file was last updated
+# Accepts path to file
+#
+sub SecondsSinceFileUpdated
+{
+  my $file = shift;
+  return ( stat ( $file ) )[9];
+}
+
+#
 # Determine if the physical ethernet adapter is up (or not)
 #
 # Returns non-zero (true) if ethernet functional, false otherwise
@@ -29,8 +39,9 @@ sub IsMameRunning()
 #
 sub ShutdownMame()
 {
-  my $mame_pid = `pidof mame`;
-  kill( "SIGTERM", $mame_pid );
+  print "called shutdownmame\n";
+  #my $mame_pid = `pidof mame`;
+  #kill( "SIGTERM", $mame_pid );
 }
 
 #
@@ -38,7 +49,8 @@ sub ShutdownMame()
 #
 sub ShutdownPi()
 {
-  exec( 'sudo shutdown -h now' );
+  print "called shutdownpi\n";
+  #exec( 'sudo shutdown -h now' );
 }
 
 #
@@ -46,23 +58,26 @@ sub ShutdownPi()
 #
 sub StartMame()
 {
-  exec( '/home/pi/mame/mame trackfld' );
+  print "starting mame\n";
+  #exec( '/home/pi/mame/mame trackfld' );
 }
 
 #
 # Update file timestamp used to track last known powered run
 #
-UpdateLastPoweredRunTime()
+sub UpdateLastPoweredRunTime()
 {
-  exec( 'touch /home/pi/.lastpoweredrun' );
+  #exec( 'touch /home/pi/.lastpoweredrun' );
+  exec( 'touch /home/parallels/.lastpoweredrun' );
 }
 
 #
 # Update file timestamp used to track last known unpowered run
 #
-UpdateLastUnpoweredRunTime()
+sub UpdateLastUnpoweredRunTime()
 {
-  exec( 'touch /home/pi/.lastunpoweredrun' );
+  #exec( 'touch /home/pi/.lastunpoweredrun' );
+  exec( 'touch /home/parallels/.lastunpoweredrun' );
 }
 
 ### Start Main Program ###
@@ -82,9 +97,12 @@ if ( $is_power_up ) {
     ShutdownMame();
   }
   UpdateLastUnpoweredRunTime();
-  # if battery low
-  # TimeDiff down, up minus expected battery life
-    # ShutdownPi();
+
+#  my $seconds_down = SecondsSinceFileUpdated( '/home/pi/.lastpoweredrun' ) - SecondsSinceFileUpdated( '/home/pi/.lastunpoweredrun' );
+  my $seconds_down = SecondsSinceFileUpdated( '/home/parallels/.lastpoweredrun' ) - SecondsSinceFileUpdated( '/home/parallels/.lastunpoweredrun' );
+  if ( $seconds_down >=  9900 ) { #9900 = 2.75 hrs
+     ShutdownPi();
+  } 
 }
 
 #EOF
