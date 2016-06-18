@@ -38,7 +38,7 @@ sub ShutdownMame()
 #
 sub ShutdownPi()
 {
-  exec( 'sudo shutdown -h now' );
+  system( 'sudo shutdown -h now' );
 }
 
 #
@@ -46,7 +46,7 @@ sub ShutdownPi()
 #
 sub StartMame()
 {
-  exec( '/home/pi/mame/mame trackfld' );
+  system( '/home/pi/mame/mame trackfld' );
 }
 
 #
@@ -54,7 +54,7 @@ sub StartMame()
 #
 sub UpdateLastPoweredRunTime()
 {
-  exec( 'touch /home/pi/.lastpoweredrun' );
+  system( 'touch /home/pi/.lastpoweredrun' );
 }
 
 #
@@ -62,7 +62,7 @@ sub UpdateLastPoweredRunTime()
 #
 sub UpdateLastUnpoweredRunTime()
 {
-  exec( 'touch /home/pi/.lastunpoweredrun' );
+  system( 'touch /home/pi/.lastunpoweredrun' );
 }
 
 ### Start Main Program ###
