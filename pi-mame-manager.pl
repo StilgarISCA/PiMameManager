@@ -8,6 +8,16 @@ my $PATH_TO_MAME = "/home/$USER/mame/"; # path to the folder containing mame exe
 my $GAME = "trackfld"; # name of the game to run
 
 #
+# CalculateDownTime
+#
+# Returns the number of seconds the system has been without power
+#
+sub CalculateDownTime()
+{
+  return SecondsSinceFileUpdated( "/home/$USER/.lastunpoweredrun" ) - SecondsSinceFileUpdated( "/home/$USER/.lastpoweredrun" );
+}
+
+#
 # Determine if the physical ethernet adapter is up (or not)
 #
 # Returns non-zero (true) if ethernet functional, false otherwise
