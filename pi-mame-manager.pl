@@ -21,7 +21,9 @@ sub IsEthernetUp()
 #
 sub IsMameRunning()
 {
-  return `pidof mame`;
+  my $pid = `pidof mame`;
+  return 0 if ( not defined $pid or $pid eq "" );
+  return $pid;
 }
 
 #
