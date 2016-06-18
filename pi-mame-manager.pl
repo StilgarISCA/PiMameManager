@@ -79,18 +79,15 @@ sub UpdateLastUnpoweredRunTime()
 
 ### Start Main Program ###
 
-my $is_power_up = IsEthernetUp();
-my $is_mame_running = IsMameRunning();
-
-if ( $is_power_up ) {
+if ( IsEthernetUp() ) { # power up
   UpdateLastPoweredRunTime();
   # UpdateChargeLevel
   # DateDiff lastDownTime, curTime minus expected charge time
-  if ( !$is_mame_running ) {
+  if ( !IsMameRunning() ) {
     StartMame();
   }
 } else { # power loss
-  if ( $is_mame_running ) {
+  if ( IsMameRunning ) {
     ShutdownMame();
   }
   UpdateLastUnpoweredRunTime();
