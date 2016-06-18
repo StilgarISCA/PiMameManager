@@ -27,6 +27,16 @@ sub IsMameRunning()
 }
 
 #
+# Get the number of seconds since a file was last updated
+# Accepts path to file
+#
+sub SecondsSinceFileUpdated
+{
+  my $file = shift;
+  return ( stat ( $file ) )[9];
+}
+
+#
 # Stops the Mame process from running
 #
 sub ShutdownMame()
