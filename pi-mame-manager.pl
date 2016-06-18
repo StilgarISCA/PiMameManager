@@ -19,7 +19,7 @@ sub SecondsSinceFileUpdated
 #
 sub IsEthernetUp()
 {
-  my $ethernet_response = `cat /sys/class/net/eth2/operstate`;
+  my $ethernet_response = `cat /sys/class/net/eth1/operstate`;
   chomp( $ethernet_response );
   return ( $ethernet_response eq 'up' );
 }
@@ -31,7 +31,9 @@ sub IsEthernetUp()
 #
 sub IsMameRunning()
 {
-  return `pidof mame`;
+  my $pid = `pidof mame`;
+  return 0 if ( not defined $pid or $pid eq "" );
+  return $pid;
 }
 
 #
@@ -50,7 +52,7 @@ sub ShutdownMame()
 sub ShutdownPi()
 {
   print "called shutdownpi\n";
-  #exec( 'sudo shutdown -h now' );
+  #system( 'sudo shutdown -h now' );
 }
 
 #
@@ -59,7 +61,7 @@ sub ShutdownPi()
 sub StartMame()
 {
   print "starting mame\n";
-  #exec( '/home/pi/mame/mame trackfld' );
+  #system( '/home/pi/mame/mame trackfld' );
 }
 
 #
@@ -67,8 +69,8 @@ sub StartMame()
 #
 sub UpdateLastPoweredRunTime()
 {
-  #exec( 'touch /home/pi/.lastpoweredrun' );
-  exec( 'touch /home/parallels/.lastpoweredrun' );
+  #system( 'touch /home/pi/.lastpoweredrun' );
+  system( 'touch /home/parallels/.lastpoweredrun' );
 }
 
 #
@@ -76,24 +78,21 @@ sub UpdateLastPoweredRunTime()
 #
 sub UpdateLastUnpoweredRunTime()
 {
-  #exec( 'touch /home/pi/.lastunpoweredrun' );
-  exec( 'touch /home/parallels/.lastunpoweredrun' );
+  #system( 'touch /home/pi/.lastunpoweredrun' );
+  system( 'touch /home/parallels/.lastunpoweredrun' );
 }
 
 ### Start Main Program ###
 
-my $is_power_up = IsEthernetUp();
-my $is_mame_running = IsMameRunning();
-
-if ( $is_power_up ) {
+if ( IsEthernetUp() ) {
   UpdateLastPoweredRunTime();
   # UpdateChargeLevel
   # DateDiff lastDownTime, curTime minus expected charge time
-  if ( !$is_mame_running ) {
+  if ( !IsMameRunning() ) {
     StartMame();
   }
 } else { # power loss
-  if ( $is_mame_running ) {
+  if ( IsMameRunning() ) {
     ShutdownMame();
   }
   UpdateLastUnpoweredRunTime();
