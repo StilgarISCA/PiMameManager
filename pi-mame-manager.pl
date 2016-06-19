@@ -103,7 +103,7 @@ if ( IsEthernetUp() ) { # power up
     StartMame();
   }
 } else { # power loss
-  if ( IsMameRunning ) {
+  if ( IsMameRunning() ) {
     ShutdownMame();
   }
   UpdateLastUnpoweredRunTime();
