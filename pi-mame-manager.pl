@@ -2,14 +2,20 @@
 use strict;
 use warnings;
 
+my $USER = "pi"; # user account this will run as
+my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
+my $PATH_TO_MAME = "/home/$USER/mame"; # path to the folder containing mame exe
+my $GAME = "trackfld"; # name of the game to run
+my $BATTERY_LIFE = 9900; # expected battery life in seconds
+
 #
-# Get the number of seconds since a file was last updated
-# Accepts path to file
+# CalculateDownTime
 #
-sub SecondsSinceFileUpdated
+# Returns the number of seconds the system has been without power
+#
+sub CalculateDownTime()
 {
-  my $file = shift;
-  return ( stat ( $file ) )[9];
+  return SecondsSinceFileUpdated( "/home/$USER/.lastunpoweredrun" ) - SecondsSinceFileUpdated( "/home/$USER/.lastpoweredrun" );
 }
 
 #
@@ -19,7 +25,7 @@ sub SecondsSinceFileUpdated
 #
 sub IsEthernetUp()
 {
-  my $ethernet_response = `cat /sys/class/net/eth1/operstate`;
+  my $ethernet_response = `cat /sys/class/net/$ETHERNET_DEVICE/operstate`;
   chomp( $ethernet_response );
   return ( $ethernet_response eq 'up' );
 }
@@ -31,9 +37,23 @@ sub IsEthernetUp()
 #
 sub IsMameRunning()
 {
-  my $pid = `pidof mame`;
-  return 0 if ( not defined $pid or $pid eq "" );
-  return $pid;
+  my $pid = `sudo pidof mame`;
+  print "my pid is $pid";
+  if ( (not defined $pid) or ($pid eq "") ) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+#
+# Get the number of seconds since a file was last updated
+# Accepts path to file
+#
+sub SecondsSinceFileUpdated
+{
+  my $file = shift;
+  return ( stat ( $file ) )[9];
 }
 
 #
@@ -41,9 +61,10 @@ sub IsMameRunning()
 #
 sub ShutdownMame()
 {
-  print "called shutdownmame\n";
+  #print "\npower loss, shutdown mame\n";
   #my $mame_pid = `pidof mame`;
   #kill( "SIGTERM", $mame_pid );
+  system( 'sudo killall mame' );
 }
 
 #
@@ -51,8 +72,7 @@ sub ShutdownMame()
 #
 sub ShutdownPi()
 {
-  print "called shutdownpi\n";
-  #system( 'sudo shutdown -h now' );
+  system( 'sudo shutdown -h now' );
 }
 
 #
@@ -60,8 +80,10 @@ sub ShutdownPi()
 #
 sub StartMame()
 {
-  print "starting mame\n";
-  #system( '/home/pi/mame/mame trackfld' );
+  my $run_mame = "$PATH_TO_MAME/mame $GAME";
+  if ( my $pid = fork() ) {
+    system( $run_mame );
+  }
 }
 
 #
@@ -69,8 +91,7 @@ sub StartMame()
 #
 sub UpdateLastPoweredRunTime()
 {
-  #system( 'touch /home/pi/.lastpoweredrun' );
-  system( 'touch /home/parallels/.lastpoweredrun' );
+  system( 'touch /home/$USER/.lastpoweredrun' );
 }
 
 #
@@ -78,30 +99,30 @@ sub UpdateLastPoweredRunTime()
 #
 sub UpdateLastUnpoweredRunTime()
 {
-  #system( 'touch /home/pi/.lastunpoweredrun' );
-  system( 'touch /home/parallels/.lastunpoweredrun' );
+  system( 'touch /home/$USER/.lastunpoweredrun' );
 }
 
 ### Start Main Program ###
-
-if ( IsEthernetUp() ) {
-  UpdateLastPoweredRunTime();
-  # UpdateChargeLevel
-  # DateDiff lastDownTime, curTime minus expected charge time
-  if ( !IsMameRunning() ) {
-    StartMame();
+print "starting up\n";
+while ( 1 ) {
+  if ( IsEthernetUp() ) { # power up
+    UpdateLastPoweredRunTime();
+    # UpdateChargeLevel
+    # DateDiff lastDownTime, curTime minus expected charge time
+    if ( !IsMameRunning() ) {
+      StartMame();
+    }
+  } else { # power loss
+    print "power is out\n";
+    if ( IsMameRunning() ) {
+      print "shutdown mame\n";
+      ShutdownMame();
+    }
+    UpdateLastUnpoweredRunTime();
+    if ( CalculateDownTime >= $BATTERY_LIFE ) {
+      ShutdownPi();
+    }
   }
-} else { # power loss
-  if ( IsMameRunning() ) {
-    ShutdownMame();
-  }
-  UpdateLastUnpoweredRunTime();
-
-#  my $seconds_down = SecondsSinceFileUpdated( '/home/pi/.lastpoweredrun' ) - SecondsSinceFileUpdated( '/home/pi/.lastunpoweredrun' );
-  my $seconds_down = SecondsSinceFileUpdated( '/home/parallels/.lastpoweredrun' ) - SecondsSinceFileUpdated( '/home/parallels/.lastunpoweredrun' );
-  if ( $seconds_down >=  9900 ) { #9900 = 2.75 hrs
-     ShutdownPi();
-  } 
+  sleep( 15 );
 }
-
 #EOF
