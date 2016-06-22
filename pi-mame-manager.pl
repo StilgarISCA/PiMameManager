@@ -39,7 +39,7 @@ sub IsMameRunning()
 {
   my $pid = `sudo pidof mame`;
   print "my pid is $pid";
-  if ( (not defined $pid) or ($pid eq "") ) {
+  if ( !defined( $pid ) or ( $pid eq "" ) ) {
     return 0;
   } else {
     return 1;
