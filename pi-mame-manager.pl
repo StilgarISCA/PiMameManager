@@ -85,6 +85,15 @@ sub StartMame()
     system( $run_mame );
   }
 }
+# From Learning Perl 5th ed.
+#defined(my $pid= fork) or die "Cannot fork: $!";
+#unless ($pid) {
+#  # Child process is here
+#  exec "date";
+#  die "cannot exec date: $!";
+#}
+## Parent process is here
+#waitpid($pid, 0);
 
 #
 # Update file timestamp used to track last known powered run
