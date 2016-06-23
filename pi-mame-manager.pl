@@ -81,8 +81,9 @@ sub ShutdownPi()
 sub StartMame()
 {
   my $run_mame = "$PATH_TO_MAME/mame $GAME";
-  if ( my $pid = fork() ) {
-    system( $run_mame );
+  defined( my $pid = fork() ); 
+  unless( $pid ) {
+    exec( $run_mame );
   }
 }
 # From Learning Perl 5th ed.
