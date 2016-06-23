@@ -62,9 +62,10 @@ sub SecondsSinceFileUpdated
 sub ShutdownMame()
 {
   #print "\npower loss, shutdown mame\n";
-  #my $mame_pid = `pidof mame`;
-  #kill( "SIGTERM", $mame_pid );
-  system( 'sudo killall mame' );
+  my $mame_pid = `pidof mame`;
+  kill( "SIGTERM", $mame_pid );
+  #system( 'sudo killall mame' );
+  waitpid( $mame_pid, 0 );
 }
 
 #
