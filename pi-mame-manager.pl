@@ -130,7 +130,7 @@ while ( 1 ) {
       ShutdownMame();
     }
     UpdateLastUnpoweredRunTime();
-    if ( CalculateDownTime >= $BATTERY_LIFE ) {
+    if ( CalculateDownTime() >= $BATTERY_LIFE ) {
       ShutdownPi();
     }
   }
