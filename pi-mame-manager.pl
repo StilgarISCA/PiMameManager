@@ -37,7 +37,7 @@ sub IsEthernetUp()
 #
 sub IsMameRunning()
 {
-  my $pid = `sudo pidof mame`;
+  my $pid = `pidof mame`;
   print "my pid is $pid";
   if ( !defined( $pid ) or ( $pid eq "" ) ) {
     return 0;
