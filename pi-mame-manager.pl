@@ -107,7 +107,7 @@ if ( IsEthernetUp() ) { # power up
     ShutdownMame();
   }
   UpdateLastUnpoweredRunTime();
-  if ( CalculateDownTime >= $BATTERY_LIFE ) {
+  if ( CalculateDownTime() >= $BATTERY_LIFE ) {
     ShutdownPi();
   }
 }
