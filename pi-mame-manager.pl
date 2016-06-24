@@ -33,13 +33,16 @@ sub IsEthernetUp()
 #
 # Determine if Mame is running (or not)
 #
-# Returns non-zero (true) if mame running, false otherwise
+# Returns 1 (true) if mame has a pid, 0 (false) otherwise
 #
 sub IsMameRunning()
 {
   my $pid = `pidof mame`;
-  return 0 if ( not defined $pid or $pid eq "" );
-  return $pid;
+  if ( !defined( $pid ) or ( $pid eq "" ) ) {
+    return 0;
+  } else {
+    return 1;
+  }
 }
 
 #
