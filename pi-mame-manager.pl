@@ -103,21 +103,26 @@ sub UpdateLastUnpoweredRunTime()
 
 ### Start Main Program ###
 
-if ( IsEthernetUp() ) { # power up
-  UpdateLastPoweredRunTime();
-  # UpdateChargeLevel
-  # DateDiff lastDownTime, curTime minus expected charge time
-  if ( !IsMameRunning() ) {
-    StartMame();
+while ( 1 ) {
+  if ( IsEthernetUp() ) { # power up
+    UpdateLastPoweredRunTime();
+    # UpdateChargeLevel
+    # DateDiff lastDownTime, curTime minus expected charge time
+    if ( !IsMameRunning() ) {
+      StartMame();
+    }
+  } else { # power loss
+    print "power is out\n";
+    if ( IsMameRunning() ) {
+      print "shutdown mame\n";
+      ShutdownMame();
+    }
+    UpdateLastUnpoweredRunTime();
+    if ( CalculateDownTime() >= $BATTERY_LIFE ) {
+      ShutdownPi();
+    }
   }
-} else { # power loss
-  if ( IsMameRunning() ) {
-    ShutdownMame();
-  }
-  UpdateLastUnpoweredRunTime();
-  if ( CalculateDownTime() >= $BATTERY_LIFE ) {
-    ShutdownPi();
-  }
+  sleep( 15 );
 }
 
 #EOF
