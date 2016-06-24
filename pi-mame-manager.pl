@@ -90,7 +90,7 @@ sub StartMame()
 #
 sub UpdateLastPoweredRunTime()
 {
-  system( 'touch /home/$USER/.lastpoweredrun' );
+  system( "touch /home/$USER/.lastpoweredrun" );
 }
 
 #
@@ -98,7 +98,7 @@ sub UpdateLastPoweredRunTime()
 #
 sub UpdateLastUnpoweredRunTime()
 {
-  system( 'touch /home/$USER/.lastunpoweredrun' );
+  system( "touch /home/$USER/.lastunpoweredrun" );
 }
 
 ### Start Main Program ###
