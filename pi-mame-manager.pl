@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 my $USER = "parallels"; # user account this will run as
-my $ETHERNET_DEVICE = "eth1"; # ethernet port connected to switch
+my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
 my $PATH_TO_MAME = "/home/$USER/mame/"; # path to the folder containing mame exe
 my $GAME = "trackfld"; # name of the game to run
 my $BATTERY_LIFE = 9900; # expected battery life in seconds
