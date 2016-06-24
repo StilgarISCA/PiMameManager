@@ -62,6 +62,7 @@ sub ShutdownMame()
 {
   my $mame_pid = `pidof mame`;
   kill( "SIGTERM", $mame_pid );
+  waitpid( $mame_pid, 0 );
 }
 
 #
@@ -73,11 +74,15 @@ sub ShutdownPi()
 }
 
 #
-# Launch the Mame process
+# Launch Mame in a new process
 #
 sub StartMame()
 {
-  system( '$PATH_TO_MAME/mame $GAME' );
+  my $run_mame = "$PATH_TO_MAME/mame $GAME";
+  defined( my $pid = fork() ); 
+  unless( $pid ) {
+    exec( $run_mame );
+  }
 }
 
 #
