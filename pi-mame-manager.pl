@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use POSIX();
 
 my $USER = "parallels";  # user account this will run as
 my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
@@ -9,6 +10,7 @@ my $MAME_EXE = "mame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 9900; # expected battery life in seconds
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
+my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
 #
 # CalculateDownTime
@@ -18,6 +20,22 @@ my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 sub CalculateDownTime()
 {
   return SecondsSinceFileUpdated( "/home/$USER/.lastunpoweredrun" ) - SecondsSinceFileUpdated( "/home/$USER/.lastpoweredrun" );
+}
+
+#
+# Debug
+# Accepts string to print
+# 
+# If debugging is enabled, print the message passed in
+# Prepends a timestamp, appends new line.
+#
+sub Debug
+{
+  return unless( $IS_DEBUG );
+
+  my $statement = shift;
+  print POSIX::strftime( "%Y-%m-%d %H:%M:%S ", localtime() );
+  print "$statement\n";
 }
 
 #
