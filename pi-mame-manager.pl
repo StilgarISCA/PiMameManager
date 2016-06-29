@@ -126,20 +126,28 @@ sub UpdateLastUnpoweredRunTime()
 
 while ( 1 ) {
   if ( IsEthernetUp() ) { # power up
+    Debug( "Power is on" );
     UpdateLastPoweredRunTime();
     # UpdateChargeLevel
     # DateDiff lastDownTime, curTime minus expected charge time
     if ( !IsMameRunning() ) {
+      Debug( "Mame is not running. Trying to start." );
       StartMame();
     }
   } else { # power loss
-    print "power is out\n";
+    Debug( "Power is off" );
+
     if ( IsMameRunning() ) {
-      print "shutdown mame\n";
+      Debug( "Mame is running. Trying to stop." );
       ShutdownMame();
     }
+
     UpdateLastUnpoweredRunTime();
-    if ( CalculateDownTime() >= $BATTERY_LIFE ) {
+    my $down_time = CalculateDownTime();
+    Debug( "Down for $down_time seconds" );
+
+    if ( $down_time >= $BATTERY_LIFE ) {
+      Debug( "Battery limit. Initiate shutdown." );
       ShutdownPi();
     }
   }
