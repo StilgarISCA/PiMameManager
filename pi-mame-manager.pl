@@ -1,4 +1,14 @@
 #!/usr/bin/perl
+##############################################################################
+# Script: pi-mame-manager.pl
+# Author: Glenn Hoeppner
+# License: MIT
+# Repository: https://github.com/StilgarISCA/PiMameManager
+# Homepage: http://www.classicarcadeprojects.com/
+#
+# A script to help facilitate using a Raspberry Pi and Raspbian OS as a
+# dedicated arcade game cabinet.
+##############################################################################
 use strict;
 use warnings;
 use POSIX();
