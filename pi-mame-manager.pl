@@ -2,10 +2,11 @@
 use strict;
 use warnings;
 
-my $USER = "parallels"; # user account this will run as
+my $USER = "parallels";  # user account this will run as
 my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
-my $PATH_TO_MAME = "/home/$USER/mame/"; # path to the folder containing mame exe
-my $GAME = "trackfld"; # name of the game to run
+my $PATH_TO_MAME = "/home/$USER/mame"; # path to the folder containing mame exe
+my $MAME_EXE = "mame";   # name of the mame executable
+my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 9900; # expected battery life in seconds
 
 #
@@ -37,7 +38,7 @@ sub IsEthernetUp()
 #
 sub IsMameRunning()
 {
-  my $pid = `pidof mame`;
+  my $pid = `pidof $MAME_EXE`;
   if ( !defined( $pid ) or ( $pid eq "" ) ) {
     return 0;
   } else {
@@ -60,7 +61,7 @@ sub SecondsSinceFileUpdated
 #
 sub ShutdownMame()
 {
-  my $mame_pid = `pidof mame`;
+  my $mame_pid = `pidof $MAME_EXE`;
   kill( "SIGTERM", $mame_pid );
   waitpid( $mame_pid, 0 );
 }
@@ -79,8 +80,8 @@ sub ShutdownPi()
 sub StartMame()
 {
   # Based on fork() sample in Learning Perl 5th Ed.
-  my $run_mame = "$PATH_TO_MAME/mame $GAME";
-  defined( my $pid = fork() ) or die( "Could not fork: $!\n" ); 
+  my $run_mame = "$PATH_TO_MAME/$MAME_EXE $GAME";
+  defined( my $pid = fork() ) or die( "ERROR: Could not fork: $!\n" ); 
   unless( $pid ) {
     exec( $run_mame );
   }
