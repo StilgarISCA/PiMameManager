@@ -78,8 +78,9 @@ sub ShutdownPi()
 #
 sub StartMame()
 {
+  # Based on fork() sample in Learning Perl 5th Ed.
   my $run_mame = "$PATH_TO_MAME/mame $GAME";
-  defined( my $pid = fork() ); 
+  defined( my $pid = fork() ) or die( "Could not fork: $!\n" ); 
   unless( $pid ) {
     exec( $run_mame );
   }
