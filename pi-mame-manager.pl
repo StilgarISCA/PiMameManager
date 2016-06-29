@@ -8,6 +8,7 @@ my $PATH_TO_MAME = "/home/$USER/mame"; # path to the folder containing mame exe
 my $MAME_EXE = "mame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 9900; # expected battery life in seconds
+my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 
 #
 # CalculateDownTime
@@ -124,7 +125,7 @@ while ( 1 ) {
       ShutdownPi();
     }
   }
-  sleep( 15 );
+  sleep( $SLEEP_INTERVAL );
 }
 
 #EOF
