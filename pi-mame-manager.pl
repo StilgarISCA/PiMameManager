@@ -33,7 +33,7 @@ sub Debug
 {
   return unless( $IS_DEBUG );
 
-  my $statement = shift;
+  my $statement = shift();
   print POSIX::strftime( "%Y-%m-%d %H:%M:%S ", localtime() );
   print "$statement\n";
 }
@@ -71,7 +71,7 @@ sub IsMameRunning()
 #
 sub SecondsSinceFileUpdated
 {
-  my $file = shift;
+  my $file = shift();
   return ( stat ( $file ) )[9];
 }
 
