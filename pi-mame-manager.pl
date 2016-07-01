@@ -13,10 +13,10 @@ use strict;
 use warnings;
 use POSIX();
 
-my $USER = "parallels";  # user account this will run as
+my $USER = "pi";  # user account this will run as
 my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
-my $PATH_TO_MAME = "/home/$USER/mame"; # path to the folder containing mame exe
-my $MAME_EXE = "mame";   # name of the mame executable
+my $PATH_TO_MAME = "/usr/local/bin"; # path to the folder containing mame exe
+my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 9900; # expected battery life in seconds
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
