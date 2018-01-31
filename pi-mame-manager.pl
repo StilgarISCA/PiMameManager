@@ -117,6 +117,22 @@ sub StartMame()
 }
 
 #
+# Turn off video output
+#
+sub TurnOffDisplay()
+{
+  system( 'sudo vcgencmd display_power 0' );
+}
+
+#
+# Turn on video output
+#
+sub TurnOnDisplay()
+{
+  system( 'sudo vcgencmd display_power 1' );
+}
+
+#
 # Update file timestamp used to track last known powered run
 #
 sub UpdateLastPoweredRunTime()
@@ -138,9 +154,11 @@ while ( 1 ) {
   if ( IsEthernetUp() ) { # power up
     Debug( "Power is on" );
     UpdateLastPoweredRunTime();
-    # UpdateChargeLevel
+    # UpdateChargeLevel()
     # DateDiff lastDownTime, curTime minus expected charge time
     if ( !IsMameRunning() ) {
+      Debug( "Turn on display." );
+      TurnOnDisplay();
       Debug( "Mame is not running. Trying to start." );
       StartMame();
     }
@@ -148,6 +166,8 @@ while ( 1 ) {
     Debug( "Power is off" );
 
     if ( IsMameRunning() ) {
+      Debug( "Turn off display." );
+      TurnOffDisplay();
       Debug( "Mame is running. Trying to stop." );
       ShutdownMame();
     }
