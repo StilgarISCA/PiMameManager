@@ -107,6 +107,8 @@ sub SecondsSinceFileUpdated
 sub SecondsToHumanReadableTime
 {
   my $time_in_seconds = shift();
+  # Based on:
+  # http://www.wellho.net/mouth/765_Perl-turning-seconds-into-days-hours-minutes-and-seconds.html
   my @time_array = gmtime( $time_in_seconds );
   return sprintf ( "%1u days %1u hours %1u minutes %1u seconds", @time_array[7, 2, 1, 0] );
 }
