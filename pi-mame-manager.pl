@@ -184,8 +184,7 @@ while ( 1 ) {
   if ( IsEthernetUp() ) { # power is up
     Debug( "Power is on" );
     UpdateLastPoweredRunTime();
-    # UpdateChargeLevel()
-    # DateDiff lastDownTime, curTime minus expected charge time
+
     if ( !IsMameRunning() ) {
       Debug( "Turn on display." );
       TurnOnDisplay();
