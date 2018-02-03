@@ -86,6 +86,17 @@ sub SecondsSinceFileUpdated
 }
 
 #
+# Converts time in seconds to a more human-readable format
+# Accepts time in seconds
+#
+sub SecondsToHumanReadableTime
+{
+  my $time_in_seconds = shift();
+  my @time_array = gmtime( $time_in_seconds );
+  return sprintf ( "%1u days %1u hours %1u minutes %1u seconds", @time_array[7, 2, 1, 0] );
+}
+
+#
 # Stops the Mame process from running
 #
 sub ShutdownMame()
@@ -174,7 +185,8 @@ while ( 1 ) {
 
     UpdateLastUnpoweredRunTime();
     my $down_time = CalculateDownTime();
-    Debug( "Down for $down_time seconds" );
+    my $readable_down_time = SecondsToHumanReadableTime( $down_time );
+    Debug( "Down for $readable_down_time seconds" );
 
     if ( $down_time >= $BATTERY_LIFE ) {
       Debug( "Battery limit. Initiate shutdown." );
