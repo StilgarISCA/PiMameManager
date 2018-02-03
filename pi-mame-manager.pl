@@ -18,7 +18,7 @@ my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
 my $PATH_TO_MAME = "/usr/local/bin"; # path to the folder containing mame exe
 my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
-my $BATTERY_LIFE = 9900; # expected battery life in seconds
+my $BATTERY_LIFE = 72;   # expected battery life in hours
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
@@ -46,6 +46,16 @@ sub Debug
   my $statement = shift();
   print POSIX::strftime( "%Y-%m-%d %H:%M:%S ", localtime() );
   print "$statement\n";
+}
+
+#
+# Converts hours to seconds
+# Accepts integer time in hours
+#
+sub HoursToSeconds
+{
+  my $hours = shift();
+  return $hours * 3600;
 }
 
 #
@@ -160,6 +170,7 @@ sub UpdateLastUnpoweredRunTime()
 }
 
 ### Start Main Program ###
+my $battery_life_in_seconds = HoursToSeconds( $BATTERY_LIFE );
 
 while ( 1 ) {
   if ( IsEthernetUp() ) { # power up
@@ -188,7 +199,7 @@ while ( 1 ) {
     my $readable_down_time = SecondsToHumanReadableTime( $down_time );
     Debug( "Down for $readable_down_time seconds" );
 
-    if ( $down_time >= $BATTERY_LIFE ) {
+    if ( $down_time >= $battery_life_in_seconds ) {
       Debug( "Battery limit. Initiate shutdown." );
       ShutdownPi();
     }
