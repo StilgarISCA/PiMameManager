@@ -23,7 +23,7 @@ my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
 #
-# CalculateDownTime
+# Measure how long the system has been unpowered
 #
 # Returns the number of seconds the system has been without power
 #
@@ -33,11 +33,10 @@ sub CalculateDownTime()
 }
 
 #
-# Debug
-# Accepts string to print
-# 
 # If debugging is enabled, print the message passed in
 # Prepends a timestamp, appends new line.
+#
+# Accepts string to print
 #
 sub Debug
 {
@@ -50,7 +49,9 @@ sub Debug
 
 #
 # Converts hours to seconds
+#
 # Accepts integer time in hours
+# Returns hours as seconds integer
 #
 sub HoursToSeconds
 {
@@ -87,7 +88,9 @@ sub IsMameRunning()
 
 #
 # Get the number of seconds since a file was last updated
+#
 # Accepts path to file
+# Returns seconds since file manipulation
 #
 sub SecondsSinceFileUpdated
 {
@@ -97,7 +100,9 @@ sub SecondsSinceFileUpdated
 
 #
 # Converts time in seconds to a more human-readable format
+#
 # Accepts time in seconds
+# Returns string of N days N hours N minutes N seconds
 #
 sub SecondsToHumanReadableTime
 {
@@ -170,10 +175,11 @@ sub UpdateLastUnpoweredRunTime()
 }
 
 ### Start Main Program ###
+
 my $battery_life_in_seconds = HoursToSeconds( $BATTERY_LIFE );
 
 while ( 1 ) {
-  if ( IsEthernetUp() ) { # power up
+  if ( IsEthernetUp() ) { # power is up
     Debug( "Power is on" );
     UpdateLastPoweredRunTime();
     # UpdateChargeLevel()
