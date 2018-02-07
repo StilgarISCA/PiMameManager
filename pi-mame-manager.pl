@@ -20,6 +20,7 @@ my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 72;   # expected battery life in hours
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
+my $WAKE_ATTEMPTS = 5;   # times to try and wake the monitor on power up
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
 #
@@ -179,6 +180,7 @@ sub UpdateLastUnpoweredRunTime()
 ### Start Main Program ###
 
 my $battery_life_in_seconds = HoursToSeconds( $BATTERY_LIFE );
+my $monitor_wake_attempts = 0;
 
 while ( 1 ) {
   if ( IsEthernetUp() ) { # power is up
@@ -186,17 +188,23 @@ while ( 1 ) {
     UpdateLastPoweredRunTime();
 
     if ( !IsMameRunning() ) {
-      Debug( "Turn on display." );
-      TurnOnDisplay();
       Debug( "Mame is not running. Trying to start." );
       StartMame();
     }
+    
+    if ( $monitor_wake_attempts < $WAKE_ATTEMPTS ) {
+    	Debug( "Turn on display." );
+    	TurnOnDisplay();
+    	$monitor_wake_attempts++;
+    }
+    
   } else { # power loss
     Debug( "Power is off" );
 
     if ( IsMameRunning() ) {
       Debug( "Turn off display." );
       TurnOffDisplay();
+      $monitor_wake_attempts = 0;
       Debug( "Mame is running. Trying to stop." );
       ShutdownMame();
     }
