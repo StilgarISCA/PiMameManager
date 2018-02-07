@@ -18,7 +18,7 @@ my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
 my $PATH_TO_MAME = "/usr/local/bin"; # path to the folder containing mame exe
 my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
-my $BATTERY_LIFE = 72;   # expected battery life in hours
+my $BATTERY_LIFE = 20;   # expected battery life in hours
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
