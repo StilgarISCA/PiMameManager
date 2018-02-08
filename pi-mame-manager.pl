@@ -20,9 +20,8 @@ my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
 my $BATTERY_LIFE = 20;   # expected battery life in hours
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
-my $WAKE_ATTEMPTS = 5;   # times to try and wake the monitor on power up
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
-
+my $DMT_MODE = 51;       # monitor is forced into this display mode on power up See https://tinyurl.com/l877e6g
 #
 # Measure how long the system has been unpowered
 #
@@ -159,6 +158,7 @@ sub TurnOffDisplay()
 sub TurnOnDisplay()
 {
   system( 'sudo vcgencmd display_power 1' );
+  system( "sudo tvservice --explicit=\"DMT $DMT_MODE HDMI\"" );
 }
 
 #
@@ -190,14 +190,10 @@ while ( 1 ) {
     if ( !IsMameRunning() ) {
       Debug( "Mame is not running. Trying to start." );
       StartMame();
-    }
-    
-    if ( $monitor_wake_attempts < $WAKE_ATTEMPTS ) {
-    	Debug( "Turn on display." );
-    	TurnOnDisplay();
-    	$monitor_wake_attempts++;
-    }
-    
+      
+      Debug( "Turn on display." );
+      TurnOnDisplay();
+    }       
   } else { # power loss
     Debug( "Power is off" );
 
