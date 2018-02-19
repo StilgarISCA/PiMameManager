@@ -18,12 +18,12 @@ my $ETHERNET_DEVICE = "eth0"; # ethernet port connected to switch
 my $PATH_TO_MAME = "/usr/local/bin"; # path to the folder containing mame exe
 my $MAME_EXE = "advmame";   # name of the mame executable
 my $GAME = "trackfld";   # name of the game to run
-my $BATTERY_LIFE = 9900; # expected battery life in seconds
+my $BATTERY_LIFE = 20;   # expected battery life in hours
 my $SLEEP_INTERVAL = 15; # seconds to wait between each run
 my $IS_DEBUG = 1;        # 1 to print debugging statements, 0 for silent
 
 #
-# CalculateDownTime
+# Measure how long the system has been unpowered
 #
 # Returns the number of seconds the system has been without power
 #
@@ -33,11 +33,10 @@ sub CalculateDownTime()
 }
 
 #
-# Debug
-# Accepts string to print
-# 
 # If debugging is enabled, print the message passed in
 # Prepends a timestamp, appends new line.
+#
+# Accepts string to print
 #
 sub Debug
 {
@@ -46,6 +45,18 @@ sub Debug
   my $statement = shift();
   print POSIX::strftime( "%Y-%m-%d %H:%M:%S ", localtime() );
   print "$statement\n";
+}
+
+#
+# Converts hours to seconds
+#
+# Accepts integer time in hours
+# Returns hours as seconds integer
+#
+sub HoursToSeconds
+{
+  my $hours = shift();
+  return $hours * 3600;
 }
 
 #
@@ -77,12 +88,29 @@ sub IsMameRunning()
 
 #
 # Get the number of seconds since a file was last updated
+#
 # Accepts path to file
+# Returns seconds since file manipulation
 #
 sub SecondsSinceFileUpdated
 {
   my $file = shift();
   return ( stat ( $file ) )[9];
+}
+
+#
+# Converts time in seconds to a more human-readable format
+#
+# Accepts time in seconds
+# Returns string of N days N hours N minutes N seconds
+#
+sub SecondsToHumanReadableTime
+{
+  my $time_in_seconds = shift();
+  # Based on:
+  # http://www.wellho.net/mouth/765_Perl-turning-seconds-into-days-hours-minutes-and-seconds.html
+  my @time_array = gmtime( $time_in_seconds );
+  return sprintf ( "%1u days %1u hours %1u minutes %1u seconds", @time_array[7, 2, 1, 0] );
 }
 
 #
@@ -117,6 +145,22 @@ sub StartMame()
 }
 
 #
+# Turn off video output
+#
+sub TurnOffDisplay()
+{
+  system( 'sudo vcgencmd display_power 0' );
+}
+
+#
+# Turn on video output
+#
+sub TurnOnDisplay()
+{
+  system( 'sudo vcgencmd display_power 1' );
+}
+
+#
 # Update file timestamp used to track last known powered run
 #
 sub UpdateLastPoweredRunTime()
@@ -134,13 +178,16 @@ sub UpdateLastUnpoweredRunTime()
 
 ### Start Main Program ###
 
+my $battery_life_in_seconds = HoursToSeconds( $BATTERY_LIFE );
+
 while ( 1 ) {
-  if ( IsEthernetUp() ) { # power up
+  if ( IsEthernetUp() ) { # power is up
     Debug( "Power is on" );
     UpdateLastPoweredRunTime();
-    # UpdateChargeLevel
-    # DateDiff lastDownTime, curTime minus expected charge time
+
     if ( !IsMameRunning() ) {
+      Debug( "Turn on display." );
+      TurnOnDisplay();
       Debug( "Mame is not running. Trying to start." );
       StartMame();
     }
@@ -148,15 +195,18 @@ while ( 1 ) {
     Debug( "Power is off" );
 
     if ( IsMameRunning() ) {
+      Debug( "Turn off display." );
+      TurnOffDisplay();
       Debug( "Mame is running. Trying to stop." );
       ShutdownMame();
     }
 
     UpdateLastUnpoweredRunTime();
     my $down_time = CalculateDownTime();
-    Debug( "Down for $down_time seconds" );
+    my $readable_down_time = SecondsToHumanReadableTime( $down_time );
+    Debug( "Down for $readable_down_time seconds" );
 
-    if ( $down_time >= $BATTERY_LIFE ) {
+    if ( $down_time >= $battery_life_in_seconds ) {
       Debug( "Battery limit. Initiate shutdown." );
       ShutdownPi();
     }
