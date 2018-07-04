@@ -119,7 +119,12 @@ sub SecondsToHumanReadableTime
 sub ShutdownMame()
 {
   my $mame_pid = `pidof $MAME_EXE`;
-  kill( "SIGTERM", $mame_pid );
+  
+  # Fake the button pushes to exit so high scores are saved
+  system( "echo -ne \"\\t\" > /proc/$mame_pid/fd/0" );  # tab
+  system( "echo -ne $'\031' > /proc/$mame_pid/fd/0" );  # down arrow
+  system( "echo -ne \"\\n\" > /proc/$mame_pid/fd/0" );  # return
+  
   waitpid( $mame_pid, 0 );
 }
 
